@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gugi's Arcade 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#FFF4F8; --bg2:#EDE3FF; --pink:#FFB6CB; --pink-deep:#FF8FAE;
+    --purple:#C9A7EB; --purple-deep:#A87FDB; --mint:#BDEBD8; --gold:#FFD873;
+    --deep:#5B3A5D; --deep-soft:#8A6B8C; --card:#FFFFFF;
+    --shadow: 0 8px 24px rgba(139, 90, 150, 0.18);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html{scroll-behavior:smooth;}
+  body{ margin:0; font-family:'Nunito', sans-serif; color:var(--deep);
+    background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%); overflow-x:hidden; }
+  h1,h2,h3, .display{ font-family:'Baloo 2', cursive; font-weight:700; }
+  a{color:inherit;}
+  .floaters{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+  .floaters span{ position:absolute; bottom:-10%; font-size:1.4rem; opacity:.35; animation: floatUp linear infinite; }
+  @keyframes floatUp{ 0%{transform:translateY(0) rotate(0deg); opacity:0;} 10%{opacity:.5;} 90%{opacity:.35;} 100%{transform:translateY(-115vh) rotate(25deg); opacity:0;} }
+  section{position:relative; z-index:1; padding:5rem 1.5rem; max-width:900px; margin:0 auto;}
+  .marquee{ position:sticky; top:0; z-index:20; display:flex; justify-content:center; gap:.5rem; padding:.9rem 1rem;
+    background:rgba(255,244,248,.85); backdrop-filter:blur(8px); border-bottom:3px dashed var(--pink); flex-wrap:wrap; }
+  .marquee a{ font-family:'Baloo 2'; font-size:.85rem; background:var(--card); border:2px solid var(--purple);
+    color:var(--purple-deep); padding:.4rem .9rem; border-radius:999px; text-decoration:none; transition:.2s; box-shadow: 0 3px 0 var(--purple); }
+  .marquee a:hover{ transform:translateY(-2px); background:var(--purple); color:white;}
+  .hero{ text-align:center; padding-top:4.5rem; padding-bottom:3rem;}
+  .badge{ display:inline-block; font-family:'Baloo 2'; font-size:.8rem; letter-spacing:.12em; background:var(--gold);
+    color:#7A5300; padding:.35rem 1rem; border-radius:999px; box-shadow: 0 3px 0 #E0AE3E; margin-bottom:1.3rem; }
+  .hero h1{ font-size:clamp(2.4rem, 8vw, 4.2rem); margin:0 0 .6rem; color:var(--pink-deep); text-shadow: 3px 3px 0 var(--purple); line-height:1.05; }
+  .hero p.sub{ font-size:1.15rem; color:var(--deep-soft); max-width:520px; margin:0 auto 2.2rem;}
+  .coin-btn{ font-family:'Baloo 2'; font-size:1.05rem; color:white; background:var(--pink-deep); border:none;
+    padding:1rem 2.2rem; border-radius:999px; cursor:pointer; box-shadow:0 5px 0 #D9607F; transition:.15s; }
+  .coin-btn:hover{ transform:translateY(-2px); box-shadow:0 7px 0 #D9607F;}
+  .coin-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 #D9607F;}
+  .coin-btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+  .hero-emoji{ font-size:2.6rem; margin-top:1.6rem; animation: bob 2.4s ease-in-out infinite;}
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+  .eyebrow{ font-family:'Baloo 2'; color:var(--purple-deep); font-size:.8rem; letter-spacing:.15em; margin-bottom:.3rem;}
+  .sec-title{ font-size:2rem; margin:0 0 .4rem; color:var(--deep);}
+  .sec-desc{ color:var(--deep-soft); margin-bottom:2.2rem; max-width:560px;}
+  .cabinet{ background:var(--card); border-radius:28px; padding:1.8rem; box-shadow:var(--shadow); border:3px solid var(--purple); margin-bottom:2.2rem; }
+  .game-tabs{ display:flex; gap:.6rem; margin-bottom:1.4rem; flex-wrap:wrap;}
+  .game-tab{ font-family:'Baloo 2'; font-size:.9rem; padding:.5rem 1rem; border-radius:999px; border:2px solid var(--purple);
+    background:white; color:var(--purple-deep); cursor:pointer; }
+  .game-tab.active{ background:var(--purple); color:white;}
+  .game-panel{ display:none; }
+  .game-panel.active{ display:block; }
+  .game-shell{background:linear-gradient(145deg,#fff8fc,#f5edff);border-radius:22px;padding:1.2rem;border:2px solid #ead8f6;}
+  .game-intro{text-align:center;margin-bottom:1rem;}
+  .game-intro .big-emoji{font-size:2.5rem;display:block;margin-bottom:.2rem;}
+  .game-intro h3{margin:.1rem 0;font-size:1.45rem;}
+  .game-intro p{margin:.2rem auto;color:var(--deep-soft);max-width:520px;}
+  .round-label{text-align:center;font-family:'Baloo 2';color:var(--purple-deep);font-size:.95rem;margin-bottom:.6rem;}
+  .round-q{text-align:center;font-family:'Baloo 2';font-size:1.2rem;margin-bottom:1rem;}
+  .choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;max-width:640px;margin:1rem auto;}
+  .choice-card{border:2px solid var(--purple);background:white;border-radius:18px;padding:1rem;cursor:pointer;text-align:left;transition:.2s;box-shadow:0 4px 0 #e6d5f3;}
+  .choice-card:hover{transform:translateY(-3px);background:#fcf8ff;}
+  .choice-card.selected{border-color:var(--pink-deep);background:#fff1f6;box-shadow:0 4px 0 #f4b0c3;}
+  .choice-card b{display:block;font-family:'Baloo 2';font-size:1.05rem;margin-bottom:.15rem;}
+  .choice-card span{font-size:.86rem;color:var(--deep-soft);}
+  .game-action{display:flex;justify-content:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem;}
+  .game-status{text-align:center;min-height:1.5rem;font-family:'Baloo 2';color:var(--pink-deep);margin-top:.8rem;}
+  .meter{height:12px;background:#eee2f7;border-radius:999px;overflow:hidden;margin:1rem auto;max-width:500px;}
+  .meter > div{height:100%;width:0;background:linear-gradient(90deg,var(--pink-deep),var(--purple-deep));transition:.5s;}
+  .date-result{display:none;margin:1rem auto 0;max-width:560px;padding:1.2rem;border-radius:18px;background:white;border:2px solid var(--mint);box-shadow:var(--shadow);text-align:center;}
+  .date-result .headline{font-family:'Baloo 2';font-size:1.4rem;color:var(--pink-deep);margin-bottom:.5rem;}
+  .date-result .recap{font-size:.92rem;color:var(--deep-soft);line-height:1.6;text-align:left;max-width:420px;margin:.6rem auto 0;}
+  .date-result .recap b{color:var(--deep);}
+  .chaos-stage{max-width:560px;margin:0 auto;}
+  .chaos-count{text-align:center;font-family:'Baloo 2';color:var(--purple-deep);font-size:.85rem;margin-bottom:.4rem;}
+  .chaos-q{background:white;border:2px solid var(--purple);border-radius:18px;padding:1.2rem 1.4rem;text-align:center;font-family:'Baloo 2';font-size:1.15rem;box-shadow:0 4px 0 #e6d5f3;margin-bottom:1rem;}
+  .chaos-choices{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+  .chaos-btn{border:2px solid var(--purple);background:white;border-radius:16px;padding:.9rem;cursor:pointer;text-align:center;transition:.15s;box-shadow:0 4px 0 #e6d5f3;}
+  .chaos-btn:hover{transform:translateY(-2px);}
+  .chaos-btn b{display:block;font-family:'Baloo 2';font-size:1.05rem;}
+  .chaos-btn span{font-size:.8rem;color:var(--deep-soft);}
+  .chaos-btn.picked{background:#fff1f6;border-color:var(--pink-deep);}
+  .chaos-btn:disabled{cursor:default;}
+  .bolly-card{max-width:680px;margin:0 auto;background:linear-gradient(145deg,#fff,#fff7fb);border:2px solid var(--purple);border-radius:22px;padding:1.3rem;}
+  .bolly-top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;}
+  .bolly-badge{font-family:'Baloo 2';background:#fff0a9;border-radius:999px;padding:.35rem .8rem;}
+  .bolly-score{font-family:'Baloo 2';color:var(--pink-deep);}
+  .quiz-progress{ height:10px; background:#F1E4FA; border-radius:999px; overflow:hidden; margin-bottom:1.6rem;}
+  .quiz-progress > div{ height:100%; background:var(--pink-deep); width:0%; transition:width .3s; }
+  .quiz-q{ font-family:'Baloo 2'; font-size:1.25rem; margin-bottom:1.2rem; }
+  .quiz-opts{ display:grid; gap:.7rem; }
+  .quiz-opt{ text-align:left; font-family:'Nunito'; font-weight:700; font-size:1rem; padding:.9rem 1.1rem;
+    border-radius:14px; border:2px solid var(--purple); background:white; cursor:pointer; transition:.15s; }
+  .quiz-opt:hover{ background:#F6EEFF; }
+  .quiz-opt.correct{ background:var(--mint); border-color:#7ECBA6; }
+  .quiz-opt.wrong{ background:#FFD8D8; border-color:#E79A9A; }
+  .notes-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; }
+  .note-card{ aspect-ratio:3/4; perspective:1000px; cursor:pointer; }
+  .note-inner{ position:relative; width:100%; height:100%; transition:transform .6s; transform-style:preserve-3d; }
+  .note-card.flipped .note-inner{ transform:rotateY(180deg); }
+  .note-face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:16px; display:flex; align-items:center;
+    justify-content:center; text-align:center; padding:.8rem; box-shadow:var(--shadow); overflow-y:auto; }
+  .note-front{ background:linear-gradient(160deg, var(--pink), var(--purple)); color:white; font-family:'Baloo 2'; font-size:1.1rem; flex-direction:column; gap:.4rem;}
+  .note-back{ background:white; color:var(--deep); font-size:.85rem; font-weight:700; transform:rotateY(180deg); border:2px solid var(--purple); line-height:1.45;}
+  .photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+  .photo-card{background:white;border:2px solid var(--purple);border-radius:22px;padding:.7rem;box-shadow:var(--shadow);transform:rotate(var(--tilt));transition:.25s;}
+  .photo-card:hover{transform:rotate(0deg) translateY(-4px);}
+  .photo-frame{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#ffe7f0,#eee2ff);}
+  .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-frame video{width:100%;height:100%;object-fit:cover;display:block;border-radius:16px;}
+  .photo-caption{font-family:'Baloo 2';font-size:1.05rem;text-align:center;margin:.7rem .2rem .15rem;}
+  .photo-sub{text-align:center;color:var(--deep-soft);font-size:.78rem;margin:0;}
+  footer{ text-align:center; padding:3rem 1.5rem 4rem; position:relative; z-index:1; }
+  footer .final{ font-family:'Baloo 2'; font-size:1.5rem; color:var(--pink-deep); margin-bottom:.4rem;}
+  footer .credit{ color:var(--deep-soft); font-size:.85rem; }
+  @media (prefers-reduced-motion: reduce){ .hero-emoji, .floaters span{ animation:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="floaters" id="floaters"></div>
+
+<nav class="marquee">
+  <a href="#arcade">🕹️ Arcade</a>
+  <a href="#quiz">🎬 Quiz</a>
+  <a href="#notes">💗 Love Notes</a>
+  <a href="#photos">📸 Photos</a>
+</nav>
+
+<section class="hero">
+  <span class="badge">★ HAPPIIIIII GIRLFRIEND'S DAY BABBBIEE ★</span>
+  <h1>Gugi's Arcade</h1>
+  <p class="sub">One coin, unlimited love. A little universe built just for you, bachuuuu.</p>
+  <button class="coin-btn" onclick="document.getElementById('arcade').scrollIntoView()">🪙 Insert Coin to Start</button>
+  <div class="hero-emoji">🎮💕🎟️</div>
+</section>
+
+<section id="arcade">
+  <div class="eyebrow">LEVEL 1</div>
+  <h2 class="sec-title">The Arcade</h2>
+  <p class="sec-desc">Two fancy little games made for my favorite person.</p>
+  <div class="cabinet">
+    <div class="game-tabs">
+      <button class="game-tab active" data-tab="date">💘 Build Our Date</button>
+      <button class="game-tab" data-tab="chaos">😈 Who Would Actually</button>
+    </div>
+
+    <div class="game-panel active" id="panel-date">
+      <div class="game-shell">
+        <div class="game-intro"><span class="big-emoji">💌</span><h3>Build Our Perfect Date</h3><p>Pick one option per round. Let's see what kind of date our two-person universe creates.</p></div>
+        <div class="meter"><div id="date-meter"></div></div>
+        <div class="round-label" id="date-round-label"></div>
+        <div id="date-round"></div>
+        <div class="game-action">
+          <button class="coin-btn" id="date-next" disabled>Choose for us 💕</button>
+          <button class="game-tab" id="date-reset">↻ Reset</button>
+        </div>
+        <div class="date-result" id="date-result"></div>
+      </div>
+    </div>
+
+    <div class="game-panel" id="panel-chaos">
+      <div class="game-shell">
+        <div class="game-intro"><span class="big-emoji">🎀</span><h3>Who Would Actually...?</h3><p>A chaotic little couple game. Pick who you think is more likely — no cheating. 😌</p></div>
+        <div class="chaos-stage">
+          <div class="chaos-count" id="chaos-count"></div>
+          <div class="chaos-q" id="chaos-q"></div>
+          <div class="chaos-choices">
+            <button class="chaos-btn" id="chaos-me"><b>👦 You</b><span>obviously me</span></button>
+            <button class="chaos-btn" id="chaos-her"><b>👧 Gugi</b><span>our resident chaos</span></button>
+          </div>
+          <div class="game-status" id="chaos-status"></div>
+          <div class="game-action"><button class="coin-btn" id="chaos-next">Next one ➜</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz">
+  <div class="eyebrow">LEVEL 2</div>
+  <h2 class="sec-title">The OG Bollywood Challenge 🎬</h2>
+  <p class="sec-desc">No easy questions here. This one's for the girl who actually knows her Bollywood. Hard mode: ON.</p>
+  <div class="cabinet bolly-card">
+    <div class="bolly-top">
+      <span class="bolly-badge">🎞️ OG Bollywood Mode</span>
+      <span class="bolly-score" id="bolly-score">Score: 0</span>
+    </div>
+    <div class="quiz-progress"><div id="quiz-bar"></div></div>
+    <div id="quiz-body"></div>
+    <div id="quiz-result" style="display:none;text-align:center;padding:1.5rem;">
+      <div style="font-size:3rem;">🎬👑</div>
+      <h3 style="font-family:'Baloo 2';font-size:1.8rem;">Bollywood Score</h3>
+      <div id="quiz-score" style="font-family:'Baloo 2';font-size:2.4rem;color:var(--pink-deep);"></div>
+      <p id="quiz-verdict"></p>
+      <button class="coin-btn" onclick="startQuiz()">Play Again 🎞️</button>
+    </div>
+  </div>
+</section>
+
+<section id="notes">
+  <div class="eyebrow">LEVEL 3</div>
+  <h2 class="sec-title">Love Notes From Me To You 💗</h2>
+  <p class="sec-desc">A few tiny reminders about all the things I love about my favorite yapper, goofball, clingy foodie. Tap a card to open it. 🥹</p>
+  <div class="notes-grid" id="notes-grid"></div>
+  <div style="text-align:center;margin-top:1.5rem;">
+    <p style="font-family:'Baloo 2';font-size:1.15rem;color:var(--pink-deep);">
+      🫂 yap to me. be goofy with me. be clingy with me. eat everything with me. grow old with me. 💗
+    </p>
+  </div>
+</section>
+
+<section id="photos">
+  <div class="eyebrow">LEVEL 4</div><h2 class="sec-title">Our Little Photo Wall 📸</h2>
+  <p class="sec-desc">A little wall of us. 🎀</p>
+  <div class="photo-grid">
+    <div class="photo-card" style="--tilt:-1.5deg">
+      <div class="photo-frame"><img src="media/photo1.jpg" alt="Our first memory"></div>
+      <div class="photo-caption">the beginning of us ❤️</div><p class="photo-sub">the café where it all started</p>
+    </div>
+    <div class="photo-card" style="--tilt:1.2deg">
+      <div class="photo-frame"><img src="media/photo2.jpg" alt="Goofy us"></div>
+      <div class="photo-caption">my favorite idiots</div><p class="photo-sub">zero normal behavior allowed</p>
+    </div>
+    <div class="photo-card" style="--tilt:-.8deg">
+      <div class="photo-frame"><img src="media/photo3.jpg" alt="Food date"></div>
+      <div class="photo-caption">you + food = happiness</div><p class="photo-sub">i'll happily be your food-date person</p>
+    </div>
+    <div class="photo-card" style="--tilt:1.7deg">
+      <div class="photo-frame"><img src="media/photo4.jpg" alt="Pretty girl"></div>
+      <div class="photo-caption">how are you even real?</div><p class="photo-sub">still unfairly pretty</p>
+    </div>
+    <div class="photo-card" style="--tilt:-1deg">
+      <div class="photo-frame"><img src="media/photo5.jpg" alt="Favorite memory"></div>
+      <div class="photo-caption">i'd choose this day again</div><p class="photo-sub">and again and again</p>
+    </div>
+    <div class="photo-card" style="--tilt:.7deg">
+      <div class="photo-frame">
+        <video src="media/video1.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="photo-caption">my favorite clip of you 🎥</div><p class="photo-sub">still makes me smile every time</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="final">Happy Girlfriend's Day, Gugi 💗</div>
+  <div class="credit">made with love, late-night yapping, goofy chaos, food dates, and way too much affection 💗</div>
+</footer>
+
+<script>
+(function(){
+  const wrap = document.getElementById('floaters');
+  const items = ['💗','💜','🎀','⭐','🕹️'];
+  for(let i=0;i<16;i++){
+    const s = document.createElement('span');
+    s.textContent = items[Math.floor(Math.random()*items.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.fontSize = (1+Math.random()*1.6)+'rem';
+    s.style.animationDuration = (10+Math.random()*12)+'s';
+    s.style.animationDelay = (Math.random()*10)+'s';
+    wrap.appendChild(s);
+  }
+})();
+
+document.querySelectorAll('.game-tab[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.game-tab[data-tab]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.game-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+const dateRounds = [
+  { label:'Round 1 · The Vibe', q:'What kind of energy are we bringing today?',
+    opts:[
+      {tag:'Full-on filmy', desc:'dramatic entrance, background music, the whole bit', emoji:'🎬'},
+      {tag:'Chill homebody', desc:'pajamas, blankets, zero plans', emoji:'🛋️'},
+      {tag:'Chaotic adventure', desc:'we decide everything on the spot', emoji:'🌀'}
+    ]},
+  { label:'Round 2 · The Food', q:'Non-negotiable — what are we eating?',
+    opts:[
+      {tag:'Butter chicken feast', desc:'extra naan, no sharing', emoji:'🍛'},
+      {tag:'Gol gappe crawl', desc:'stall by stall, most-eaten wins', emoji:'🥟'},
+      {tag:'Dessert-only day', desc:'blueberry cheesecake, obviously', emoji:'🍰'}
+    ]},
+  { label:'Round 3 · The Movie', q:'What are we watching (if anything)?',
+    opts:[
+      {tag:'Old-school Bollywood classic', desc:'the kind we quote forever', emoji:'📼'},
+      {tag:'New-age Bollywood rom-com', desc:'popcorn, opinions, more opinions', emoji:'🍿'},
+      {tag:'No movie, just yapping', desc:'you talk, I listen, hours vanish', emoji:'🗣️'}
+    ]},
+  { label:'Round 4 · The Ending', q:'How does tonight wrap up?',
+    opts:[
+      {tag:'Late-night drive', desc:'windows down, your playlist on', emoji:'🌃'},
+      {tag:'Falling asleep mid-movie', desc:'on my shoulder, no complaints', emoji:'😴'},
+      {tag:'Dessert + yapping till 2am', desc:'the classic combo', emoji:'🌙'}
+    ]}
+];
+let dateState = { round:0, picked:null, choices:[] };
+
+function renderDateRound(){
+  const r = dateRounds[dateState.round];
+  document.getElementById('date-meter').style.width = (dateState.round/dateRounds.length*100)+'%';
+  document.getElementById('date-round-label').textContent = r.label;
+  document.getElementById('date-result').style.display = 'none';
+  const nextBtn = document.getElementById('date-next');
+  nextBtn.style.display = 'inline-block';
+  nextBtn.disabled = true;
+  nextBtn.textContent = dateState.round === dateRounds.length-1 ? 'Lock it in 💕' : 'Choose for us 💕';
+  dateState.picked = null;
+  const wrap = document.getElementById('date-round');
+  wrap.innerHTML = '<div class="round-q">'+r.q+'</div><div class="choice-grid">' +
+    r.opts.map((o,i)=>'<div class="choice-card" data-i="'+i+'"><b>'+o.emoji+' '+o.tag+'</b><span>'+o.desc+'</span></div>').join('') +
+    '</div>';
+  wrap.querySelectorAll('.choice-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      wrap.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      dateState.picked = r.opts[parseInt(card.dataset.i)];
+      nextBtn.disabled = false;
+    });
+  });
+}
+document.getElementById('date-next').addEventListener('click', ()=>{
+  if(!dateState.picked) return;
+  dateState.choices.push(dateState.picked);
+  dateState.round++;
+  if(dateState.round < dateRounds.length){
+    renderDateRound();
+  } else {
+    document.getElementById('date-meter').style.width = '100%';
+    document.getElementById('date-round-label').textContent = '';
+    document.getElementById('date-round').innerHTML = '';
+    document.getElementById('date-next').style.display = 'none';
+    const vibe = dateState.choices[0], food = dateState.choices[1], movie = dateState.choices[2], ending = dateState.choices[3];
+    const result = document.getElementById('date-result');
+    result.style.display = 'block';
+    result.innerHTML =
+      '<div class="headline">Our date, decided 💫</div>' +
+      '<div class="recap"><div>'+vibe.emoji+' <b>'+vibe.tag+'</b> energy, fueled by '+food.emoji+' <b>'+food.tag+'</b>, ' +
+      'winding down with '+movie.emoji+' <b>'+movie.tag+'</b>, ending in '+ending.emoji+' <b>'+ending.tag+'</b>.</div></div>' +
+      '<p style="margin-top:.8rem;color:var(--deep-soft);font-size:.88rem;">honestly? I would say yes to this every single time. 💗</p>';
+  }
+});
+document.getElementById('date-reset').addEventListener('click', ()=>{
+  dateState = { round:0, picked:null, choices:[] };
+  renderDateRound();
+});
+renderDateRound();
+
+const chaosItems = [
+  { q:"Talks for 45 minutes straight about something that happened 3 years ago", her:"Called it before you even clicked. 😂", me:"Nice try — we both know exactly who this is. 😏" },
+  { q:"Convinces the other to order 'just one more' plate of gol gappe", her:"Every. Single. Time. 🥟", me:"Sure, blame it on me. Somehow it's always your idea. 😌" },
+  { q:"Randomly starts dancing to a Bollywood song mid-kitchen", her:"An absolute national treasure. 💃", me:"Okay, occasionally guilty as charged. 🕺" },
+  { q:"Sends 27 voice notes in a row instead of one text", her:"Certified yapper behavior. 🗣️", me:"That's a bold claim for someone who never checks their phone. 😆" },
+  { q:"Falls asleep mid-movie and denies it the next morning", her:"'I was just resting my eyes.' Sure. 😴", me:"Rare, but it has happened. Don't tell her I admitted that. 🤫" },
+  { q:"Cries during a movie and blames it on 'allergies'", her:"Every rom-com, without fail. 🥲", me:"It's the popcorn dust. Definitely the popcorn dust. 🍿" },
+  { q:"Starts a full debate over which Bollywood hero is superior", her:"Will fight to the death over this. 🎬", me:"Mostly just here to agree so the debate ends faster. 😅" },
+  { q:"Says 'five more minutes' of cuddling and means 45", her:"A scientifically proven fact at this point. 🫂", me:"Not complaining, just saying the math never adds up. ⏳" }
+];
+let chaosIdx = 0;
+function renderChaos(){
+  const item = chaosItems[chaosIdx];
+  document.getElementById('chaos-count').textContent = 'Round '+(chaosIdx+1)+' of '+chaosItems.length;
+  document.getElementById('chaos-q').textContent = item.q;
+  document.getElementById('chaos-status').textContent = '';
+  document.getElementById('chaos-me').classList.remove('picked');
+  document.getElementById('chaos-her').classList.remove('picked');
+  document.getElementById('chaos-me').disabled = false;
+  document.getElementById('chaos-her').disabled = false;
+}
+function pickChaos(who){
+  const item = chaosItems[chaosIdx];
+  document.getElementById('chaos-me').disabled = true;
+  document.getElementById('chaos-her').disabled = true;
+  document.getElementById(who === 'her' ? 'chaos-her' : 'chaos-me').classList.add('picked');
+  document.getElementById('chaos-status').textContent = who === 'her' ? item.her : item.me;
+}
+document.getElementById('chaos-me').addEventListener('click', ()=>pickChaos('me'));
+document.getElementById('chaos-her').addEventListener('click', ()=>pickChaos('her'));
+document.getElementById('chaos-next').addEventListener('click', ()=>{
+  chaosIdx = (chaosIdx+1) % chaosItems.length;
+  renderChaos();
+});
+renderChaos();
+
+const quizData=[
+["In 'Dil Chahta Hai', what is the name of Akash's father?",["Mahesh Mehra","Suresh Mehra","Ramesh Mehra","Rajesh Mehra"],0],
+["Which film features Sardar Khan and the Wasseypur gang wars?",["Gangs of Wasseypur","Satya","Company","Omkara"],0],
+["In 'Andaz Apna Apna', who is Crime Master Gogo's famous uncle?",["Teja","Robert","Ram Gopal Bajaj","Shyam Gopal Bajaj"],0],
+["Who composed the music for 'Dil Se..'?",["A. R. Rahman","Anu Malik","Jatin–Lalit","Vishal Bhardwaj"],0],
+["Who played Vijay Dinanath Chauhan in the original 1990 'Agneepath'?",["Amitabh Bachchan","Anil Kapoor","Nana Patekar","Mithun Chakraborty"],0],
+["In 'Kabhi Haan Kabhi Naa', what is the name of Sunil's love interest?",["Anna","Asha","Maria","Mary"],0],
+["Who directed both 'Jaane Bhi Do Yaaro' and 'Kabhi Haan Kabhi Naa'?",["Kundan Shah","Saeed Akhtar Mirza","Govind Nihalani","Hrishikesh Mukherjee"],0],
+["In 'Mr. India', what is Amrish Puri's villain called?",["Mogambo","Bhujang","Balram","Shakaal"],0],
+["Which 1975 film has Veeru, Jai, Basanti and Thakur Baldev Singh?",["Sholay","Deewaar","Zanjeer","Don"],0],
+["Who played Mili in 'Rangeela'?",["Urmila Matondkar","Tabu","Manisha Koirala","Karishma Kapoor"],0],
+["In 'Swades', what is the village where Mohan Bhargava stays?",["Charanpur","Sundarpur","Devgarh","Rampur"],0],
+["Who played Babu Bhaiya in the 'Hera Pheri' series?",["Paresh Rawal","Rajpal Yadav","Shakti Kapoor","Johnny Lever"],0],
+["Which actress played both roles in 'Seeta Aur Geeta'?",["Hema Malini","Sharmila Tagore","Rakhee","Mumtaz"],0],
+["In 'Zindagi Na Milegi Dobara', which sport does Imran do in Spain?",["Skydiving","Scuba diving","Bull running","Deep-sea fishing"],0],
+["Who directed 'Black Friday' (2004), based on the Mumbai blasts?",["Anurag Kashyap","Ram Gopal Varma","Vishal Bhardwaj","Sudhir Mishra"],0]
+];
+
+let qi=0,qs=0;
+function startQuiz(){
+  qi=0;qs=0;
+  document.getElementById("quiz-result").style.display="none";
+  document.getElementById("quiz-body").style.display="block";
+  document.getElementById("bolly-score").textContent="Score: 0";
+  showQuestion();
+}
+function showQuestion(){
+  const item = quizData[qi]; const q = item[0]; const opts = item[1]; const answer = item[2];
+  document.getElementById("quiz-bar").style.width=(qi/quizData.length*100)+"%";
+  const body=document.getElementById("quiz-body");
+  body.innerHTML='<div class="quiz-q">Q'+(qi+1)+'. '+q+'</div><div class="quiz-opts">'+
+    opts.map((x,i)=>'<button class="quiz-opt" data-i="'+i+'">'+x+'</button>').join("")+
+    '</div>';
+  body.querySelectorAll(".quiz-opt").forEach(btn=>btn.onclick=()=>{
+    body.querySelectorAll(".quiz-opt").forEach(b=>b.disabled=true);
+    const chosen=Number(btn.dataset.i);
+    if(chosen===answer){btn.classList.add("correct");qs++;}
+    else{btn.classList.add("wrong");body.querySelectorAll(".quiz-opt")[answer].classList.add("correct");}
+    document.getElementById("bolly-score").textContent="Score: "+qs;
+    setTimeout(()=>{qi++;qi<quizData.length?showQuestion():finishQuiz();},700);
+  });
+}
+function finishQuiz(){
+  document.getElementById("quiz-bar").style.width="100%";
+  document.getElementById("quiz-body").style.display="none";
+  document.getElementById("quiz-result").style.display="block";
+  document.getElementById("quiz-score").textContent=qs+"/"+quizData.length;
+  document.getElementById("quiz-verdict").textContent=
+    qs===quizData.length?"OG Bollywood royalty. 😭🎬 You are officially too powerful.":
+    qs>=12?"Certified OG fan. 👑🎬":
+    qs>=8?"Okayyy, solid Bollywood knowledge. 😌❤️":
+    "I'm taking away your Bollywood fan card for 5 minutes. 😭 Try again!";
+}
+startQuiz();
+
+const notes=[
+["🗣️","my favorite yapper, you never have to wonder if you're talking too much with me. tell me every tiny detail, every random thought, every unnecessary side story, every piece of gossip — i genuinely love listening to you. you have my lifetime membership for yapping. always."],
+["🫂","when you say you want to hide inside me and have my hug replace your blanket, just know you never have to ask twice. come here, baby. my chest, my arms, my hugs — all yours. if being with me makes you feel safe and protected, that's exactly where i want you to feel safest."],
+["🤪","please don't ever become less goofy for me. i love your random nonsense, your dramatic reactions, your stupid little jokes and the way you can turn the most normal conversation into absolute chaos. i'd rather have your weirdness forever than a 'normal' version of you for a day."],
+["🎀","you sometimes call yourself difficult, toxic, stubborn or an ass, but baby, i don't see you as some burden i have to cope with. i see my girl. the one i choose to understand, the one i want to be gentle with, and the one i'll keep loving even on the days you're not the easiest version of yourself."],
+["🤍","you never have to apologize for ranting to me or worry that you're spoiling my mood. if something is hurting you, tell me. if you need to yap, yap. if you need silence, i'll sit with you. you don't have to carry everything alone just because you're scared of stressing me out."],
+["🍕","and then there's the foodie in you 😭. i fully accept that loving you comes with sharing desserts, bringing you sweets even when you say 'no spending on me', hunting for good food and absolutely letting you steal bites from my plate. honestly, feeding you might become one of my favorite love languages."],
+["🥹","you once worried that maybe you were too much and that i might eventually get tired of you. but look at me — i'm still here, still choosing you, still wanting to listen, still wanting your hugs, still wanting to take care of you. you don't have to earn my love by becoming easier to handle."],
+["🌙","and someday, i don't just want the exciting parts with you. i want the old-us too. the two of us becoming oldies, still yapping late at night, still fighting over food, still annoying each other, still stealing hugs, still calling each other baby, and still looking at each other like 'yeah... i'd choose you all over again.'"]
+];
+const ng=document.getElementById("notes-grid");
+notes.forEach(n=>{
+  const card=document.createElement("div");
+  card.className="note-card";
+  card.innerHTML='<div class="note-inner"><div class="note-face note-front"><span style="font-size:1.8rem">'+n[0]+'</span>Tap to open</div><div class="note-face note-back">'+n[1]+'</div></div>';
+  card.onclick=()=>card.classList.toggle("flipped");
+  ng.appendChild(card);
+});
+
+
+</script>
+</body>
+</html>
