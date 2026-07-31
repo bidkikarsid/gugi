@@ -220,7 +220,7 @@
     </div>
     <div class="photo-card" style="--tilt:1.2deg">
       <div class="photo-frame"><img src="media/img2.jpg" alt="my bachhhuuuu"></div>
-      <div class="photo-caption">She was this adorable before I even got the chance to fall for her</div><p class="photo-sub">cutiepieee</p>
+      <div class="photo-caption">she was this adorable before i even got the chance to fall for her</div><p class="photo-sub">cutiepieee</p>
     </div>
     <div class="photo-card" style="--tilt:-.8deg">
       <div class="photo-frame"><img src="media/img3.jpg" alt="sweetheartt"></div>
@@ -236,7 +236,7 @@
     </div>
     <div class="photo-card" style="--tilt:1.3deg">
       <div class="photo-frame">
-        <video src="media/vid1=2.mp4" autoplay muted loop playsinline></video>
+        <video src="media/vid2.mp4" autoplay muted loop playsinline></video>
       </div>
       <div class="photo-caption">my favvv personnn</div><p class="photo-sub">you, alwayss youu</p>
     </div>
@@ -461,7 +461,14 @@ const ng=document.getElementById("notes-grid");
 notes.forEach(n=>{
   const card=document.createElement("div");
   card.className="note-card";
-  card.innerHTML='<div class="note-inner"><div class="note-face note-front"><span style="font-size:1.8rem">'+n[0]+'</span>Tap to open</div><div class="note-face note-back">'+n[1]+'</div></div>';
+  card.innerHTML=
+    '<div class="note-inner">' +
+      '<div class="note-face note-front" style="display:flex;">' +
+        '<span style="font-size:2rem;display:block;margin-bottom:.3rem">'+n[0]+'</span>' +
+        '<span>Tap to open 💗</span>' +
+      '</div>' +
+      '<div class="note-face note-back">'+n[1]+'</div>' +
+    '</div>';
   card.onclick=()=>card.classList.toggle("flipped");
   ng.appendChild(card);
 });
